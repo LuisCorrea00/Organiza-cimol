@@ -74,7 +74,7 @@ export default {
             senha:'',
             showSenha: false,
             rules: {
-                required: value => !!value || 'Required.',
+                required: value => !!value || 'Obrigatório.',
             },
         }
     },
