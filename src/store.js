@@ -5,30 +5,34 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
+        userName:'',
         email:'',
-        senha:'',
+        password:'',
         message: {
             text: '',
             type: '',
         },
+        turno: 'Manhã',
+        day:'Segunda',
     },
     mutations: {
         setEmail(state, payload){
             state.email = payload;
+            if (payload === 'Admin') state.userName = payload;
         },
-        setSenha(state, payload){
-            state.senha = payload;
+        setPassword(state, payload){
+            state.password = payload;
+        },
+        setTurno(state, payload){
+          state.turno = payload;
+        },
+        setDay(state, payload){
+            state.day = payload;
         },
         showErrorMessage(state, payload) {
             state.message = {
                 text: payload,
                 type: 'ERROR',
-            };
-        },
-        showSuccessMessage(state, payload) {
-            state.message = {
-                text: payload,
-                type: 'SUCCESS',
             };
         },
     }

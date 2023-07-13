@@ -1,9 +1,7 @@
 <template>
   <v-app>
       <main-header/>
-      <v-content>
-          <router-view/>
-      </v-content>
+      <router-view/>
       <feed-back/>
   </v-app>
 </template>
