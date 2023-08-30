@@ -35,6 +35,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
     name: "TabelaSalas",
     data(){
@@ -215,7 +217,16 @@ export default {
                     ],
                 },
             ],
+            grade: null,
         }
+    },
+    created() {
+        axios
+            .get(`http://localhost:3000/salas/grade/dia/${this.day}/${this.turno}`)
+            .then(response => {
+                this.grade = response;
+                console.log(response.data);
+            })
     },
     props:{
         predioName: String,

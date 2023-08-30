@@ -18,7 +18,6 @@ export default new Vuex.Store({
     mutations: {
         setEmail(state, payload){
             state.email = payload;
-            if (payload === 'Admin') state.userName = payload;
         },
         setPassword(state, payload){
             state.password = payload;
