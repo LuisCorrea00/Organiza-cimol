@@ -5,9 +5,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        userName:'',
-        email:'',
-        password:'',
+        username:'',
+        token: null,
         message: {
             text: '',
             type: '',
@@ -16,11 +15,11 @@ export default new Vuex.Store({
         day:'Segunda',
     },
     mutations: {
-        setEmail(state, payload){
-            state.email = payload;
+        setUser(state, payload){
+            state.username = payload;
         },
-        setPassword(state, payload){
-            state.password = payload;
+        setToken(state, payload){
+            state.token = payload;
         },
         setTurno(state, payload){
           state.turno = payload;

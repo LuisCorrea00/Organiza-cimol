@@ -9,27 +9,17 @@
             />
         </div>
         <v-spacer />
-<!--        <div class="fill-height d-flex align-end justify-end mr-5">-->
-<!--            <a v-if="name" class="white&#45;&#45;text text-h6 text-decoration-underline">-->
-<!--                Olá, {{ name }}-->
-<!--            </a>-->
-<!--        </div>-->
     </v-app-bar>
 </template>
 
 
 <script>
 export default {
-    name: "MainHeader",
-    watch: {
-        '$store.state.turno'(newValue) {
-            this.name = newValue;
-        },
-    },
-    computed: {
-        name() {
-            return this.$store.state.userName;
-        },
+    name: 'MainHeader',
+    data() {
+        return {
+
+        };
     },
 }
 </script>

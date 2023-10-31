@@ -1,30 +1,46 @@
 <template>
     <v-container>
-        <v-row justify="center" v-for="(predio, index) in Predios" :key="index">
+        <v-row>
+            {{ predioName }}
             <v-col cols="12">
-                {{ predioName }}
                 <v-simple-table>
                     <template v-slot:default>
                         <thead>
-                        <tr>
-                            <th>Sala</th>
-                            <th v-for="(horario, index) in predio[turno]" :key="index">
-                                {{ horario }}
-                            </th>
-                            <th>Tipo</th>
-                            <th>Capac</th>
-                        </tr>
+                            <tr>
+                                <th>Sala</th>
+                                <th
+                                    v-for="(horario, hIndex) in horarios[turno]"
+                                    :key="hIndex"
+                                >
+                                    {{ horario }}
+                                </th>
+                                <th>Tipo</th>
+                                <th>Capac</th>
+                            </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(sala, index) in predio[day][0].Salas" :key="index">
-                                <td>{{ sala.sala }}</td>
-                                <td>{{ sala['turma1'] }}</td>
-                                <td>{{ sala['turma2'] }}</td>
-                                <td>{{ sala['turma3'] }}</td>
-                                <td>{{ sala['turma4'] }}</td>
-                                <td>{{ sala['turma5'] }}</td>
+                            <tr v-for="(sala, sIndex) in salas" :key="sIndex">
+                                <td>{{ sala.nome }}</td>
+                                <td
+                                    v-for="(horario, hIndex) in horarios[turno]"
+                                    :key="hIndex"
+                                >
+                                    <span
+                                        v-for="grade in gradePredio"
+                                        :key="grade"
+                                    >
+                                        <span
+                                            v-if="
+                                                grade.Sala === sala.nome &&
+                                                grade.Horario === horario
+                                            "
+                                        >
+                                            {{ grade.Turma }} ({{ grade.Disciplina }})
+                                        </span>
+                                    </span>
+                                </td>
                                 <td>{{ sala.tipo }}</td>
-                                <td>{{ sala.capac }}</td>
+                                <td>{{ sala.capacidade }}</td>
                             </tr>
                         </tbody>
                     </template>
@@ -35,221 +51,72 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 
 export default {
-    name: "TabelaSalas",
-    data(){
-        return{
-            Predios: [
-                {
-                    Manhã: ['07:30', '08:20', '09:10', '10:15', '11:00'],
-                    Tarde: ['13:00', '13:50', '14:40', '15:45', '16:30'],
-                    Segunda:[
-                        {Salas: [
-                                {
-                                    sala: '201',
-                                    turma1: '63AB',
-                                    turma2: '63AB',
-                                    turma3: '82 2',
-                                    turma4: '82 2',
-                                    turma5: '82 2',
-                                    tipo: 'Sala de aula',
-                                    capac: '40',
-                                },
-                                {
-                                    sala: '202',
-                                    turma1: '63A',
-                                    turma2: '63A',
-                                    turma3: '63A',
-                                    turma4: '63A',
-                                    turma5: '63A',
-                                    tipo: 'Lab',
-                                    capac: '20',
-                                },
-                                {
-                                    sala: '203',
-                                    turma1: '63B',
-                                    turma2: '63B',
-                                    turma3: '63B',
-                                    turma4: '63B',
-                                    turma5: '63B',
-                                    tipo: 'Lab',
-                                    capac: '20',
-                                },
-                            ]}
-                    ],
-                    Terça :[
-                        {Salas:[
-                                {
-                                    sala: '101',
-                                    turma1: '61 1',
-                                    turma2: '61 1',
-                                    turma3: '83',
-                                    turma4: '83',
-                                    turma5: '83',
-                                    tipo: 'Sala de aula',
-                                    capac: '40',
-                                },
-                                {
-                                    sala: '202',
-                                    turma1: '63B',
-                                    turma2: '63B',
-                                    turma3: '63B',
-                                    turma4: '63B',
-                                    turma5: '63B',
-                                    tipo: 'Lab',
-                                    capac: '20',
-                                },
-                                {
-                                    sala: '203',
-                                    turma1: '62 2',
-                                    turma2: '62 2',
-                                    turma3: '62 2',
-                                    turma4: '62 2',
-                                    turma5: '62 2',
-                                    tipo: 'Lab',
-                                    capac: '20',
-                                },
-                            ]}
-                    ],
-                    Quarta :[
-                        {Salas:[
-                                {
-                                    sala: '201',
-                                    turma1: '63AB',
-                                    turma2: '63AB',
-                                    turma3: '82 2',
-                                    turma4: '82 2',
-                                    turma5: '82 2',
-                                    tipo: 'Sala de aula',
-                                    capac: '40',
-                                },
-                                {
-                                    sala: '202',
-                                    turma1: '63A',
-                                    turma2: '63A',
-                                    turma3: '63A',
-                                    turma4: '63A',
-                                    turma5: '63A',
-                                    tipo: 'Lab',
-                                    capac: '20',
-                                },
-                                {
-                                    sala: '203',
-                                    turma1: '63B',
-                                    turma2: '63B',
-                                    turma3: '63B',
-                                    turma4: '63B',
-                                    turma5: '63B',
-                                    tipo: 'Lab',
-                                    capac: '20',
-                                },
-                            ]}
-                    ],
-                    Quinta :[
-                        {Salas:[
-                                {
-                                    sala: '101',
-                                    turma1: '61 1',
-                                    turma2: '61 1',
-                                    turma3: '83',
-                                    turma4: '83',
-                                    turma5: '83',
-                                    tipo: 'Sala de aula',
-                                    capac: '40',
-                                },
-                                {
-                                    sala: '202',
-                                    turma1: '63B',
-                                    turma2: '63B',
-                                    turma3: '63B',
-                                    turma4: '63B',
-                                    turma5: '63B',
-                                    tipo: 'Lab',
-                                    capac: '20',
-                                },
-                                {
-                                    sala: '203',
-                                    turma1: '62 2',
-                                    turma2: '62 2',
-                                    turma3: '62 2',
-                                    turma4: '62 2',
-                                    turma5: '62 2',
-                                    tipo: 'Lab',
-                                    capac: '20',
-                                },
-                            ]}
-                    ],
-                    Sexta :[
-                        {Salas:[
-                                {
-                                    sala: '201',
-                                    turma1: '63',
-                                    turma2: '63',
-                                    turma3: '81 2',
-                                    turma4: '81 2',
-                                    turma5: '81 2',
-                                    tipo: 'Sala de aula',
-                                    capac: '40',
-                                },
-                                {
-                                    sala: '202',
-                                    turma1: '63B',
-                                    turma2: '63B',
-                                    turma3: '63B',
-                                    turma4: '63B',
-                                    turma5: '63B',
-                                    tipo: 'Lab',
-                                    capac: '20',
-                                },
-                                {
-                                    sala: '203',
-                                    turma1: '63A',
-                                    turma2: '63A',
-                                    turma3: '63A',
-                                    turma4: '63A',
-                                    turma5: '63A',
-                                    tipo: 'Lab',
-                                    capac: '20',
-                                },
-                            ]}
-                    ],
-                },
-            ],
-            grade: null,
-        }
+    name: 'TabelaSalas',
+    data() {
+        return {
+            gradePredio: [],
+            horarios: {
+                Manhã: [
+                    '07:30:00',
+                    '08:20:00',
+                    '09:10:00',
+                    '10:15:00',
+                    '11:00:00',
+                ],
+                Tarde: [
+                    '13:00:00',
+                    '13:50:00',
+                    '14:40:00',
+                    '15:45:00',
+                    '16:30:00',
+                ],
+            },
+            salas: [],
+            turno: this.$store.state.turno,
+            day: this.$store.state.day,
+        };
     },
     created() {
+        axios.get('http://localhost:3000/salas/').then((response) => {
+            response.data.forEach((element) => {
+                if (
+                    element.predio ==
+                    this.predioName.charAt(this.predioName.length - 1)
+                ) {
+                    this.salas.push(element);
+                }
+            });
+        });
         axios
-            .get(`http://localhost:3000/salas/grade/dia/${this.day}/${this.turno}`)
-            .then(response => {
-                this.grade = response;
-                console.log(response.data);
-            })
+            .get(
+                `http://localhost:3000/salas/grade/?dia=${this.day}&turno=${this.turno}`
+            )
+            .then((response) => {
+                response.data.forEach((element) => {
+                    if (
+                        element.Predio ==
+                        this.predioName.charAt(this.predioName.length - 1)
+                    ) {
+                        this.gradePredio.push(element);
+                    }
+                });
+            });
     },
-    props:{
+    props: {
         predioName: String,
     },
     watch: {
-        '$store.state.turno'(newValue) {
-            this.turno = newValue;
+        turno(newValue) {
+            this.$store.commit('setTurno', newValue);
         },
-        '$store.state.day'(newValue){
-            this.day = newValue;
-        }
-    },
-    computed: {
-        turno() {
-            return this.$store.state.turno;
+        day(newValue) {
+            this.$store.commit('setDay', newValue);
         },
-        day(){
-            return this.$store.state.day;
-        }
     },
-}
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
