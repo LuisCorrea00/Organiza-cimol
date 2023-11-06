@@ -119,11 +119,15 @@ export default {
             this.$store.commit('setDay', selectedDay.name);
             this.refresh();
         },
-        gerar() {
-            axios.post(
+        async gerar() {
+            try{
+                await axios.post(
                 `http://localhost:3000/salas/criar-grade?dia=${this.day}&turno=${this.turno}`
-            );
-            this.refresh();
+                );
+                this.refresh();
+            } catch(err) {
+                console.log(err);
+            }
         },
         edit() {
             this.$store.commit('setEditDialog', true);
