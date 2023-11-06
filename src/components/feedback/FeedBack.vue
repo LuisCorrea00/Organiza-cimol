@@ -13,7 +13,7 @@
 
 <script>
 export default {
-    name: "FeedBack",
+    name: 'FeedBack',
     data() {
         return {
             message: '',
@@ -34,9 +34,7 @@ export default {
             this.showMessage = true;
         },
     },
-}
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

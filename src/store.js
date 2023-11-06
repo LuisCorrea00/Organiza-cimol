@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        username:'',
+        username: null,
         token: null,
         message: {
             text: '',
@@ -13,6 +13,7 @@ export default new Vuex.Store({
         },
         turno: 'Manhã',
         day:'Segunda',
+        editDialog: false,
     },
     mutations: {
         setUser(state, payload){
@@ -32,6 +33,15 @@ export default new Vuex.Store({
                 text: payload,
                 type: 'ERROR',
             };
+        },
+        showSuccessMessage(state, payload) {
+            state.message = {
+                text: payload,
+                type: 'SUCCESS',
+            };
+        },
+        setEditDialog(state, payload){
+            state.editDialog = payload;
         },
     }
 });

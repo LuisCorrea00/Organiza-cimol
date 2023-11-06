@@ -37,26 +37,58 @@
                     :key="index"
                     class="pa-2"
                 >
-                    <tabela-salas :predio-name="predio.name"/>
+                    <tabela-salas :predio-name="predio.name" />
                 </v-row>
             </template>
+            <div v-if="$store.state.editDialog">
+                <component :is="dynamicComponent" @atualizar="refresh" />
+            </div>
         </v-container>
         <v-btn fab fixed right bottom color="primary" x-large @click="gerar">
             <v-icon>mdi-calendar-edit</v-icon>
+        </v-btn>
+        <v-btn
+            fab
+            fixed
+            right
+            bottom
+            color="primary"
+            x-large
+            @click="edit"
+            class="btn-edit"
+        >
+            <v-icon>mdi-pencil</v-icon>
+        </v-btn>
+        <v-btn
+            fab
+            fixed
+            right
+            bottom
+            color="error"
+            x-large
+            class="alert"
+            v-if="gradeNull"
+            @click="showMissing"
+        >
+            <v-icon>mdi-alert</v-icon>
         </v-btn>
     </v-main>
 </template>
 
 <script>
 import TabelaSalas from '@/components/tabela/TabelaSalas.vue';
+import EditDialog from '@/components/edit/EditDialog.vue';
 import axios from 'axios';
 
 export default {
     name: 'SalasPage',
-    components: { TabelaSalas },
+    components: { TabelaSalas, EditDialog },
     data() {
         return {
-            showTable: false,
+            turmasNull: [],
+            gradeNull: false,
+            showTable: true,
+            dynamicComponentData: null,
             Predio: [
                 { name: 'Prédio A' },
                 { name: 'Prédio B' },
@@ -80,30 +112,78 @@ export default {
         changeTurno(selectedTurno) {
             this.turno = selectedTurno.name;
             this.$store.commit('setTurno', selectedTurno.name);
-            if (this.showTable == true) {
-                this.showTable = false;
-                this.gerar();
-            }
+            this.refresh();
         },
         changeDay(selectedDay) {
             this.day = selectedDay.name;
             this.$store.commit('setDay', selectedDay.name);
-            if (this.showTable == true) {
-                this.showTable = false;
-                this.gerar();
-            }
+            this.refresh();
         },
-        async gerar() {
-            try {
-                await axios.post(
-                    `http://localhost:3000/salas/criar-grade?dia=${this.day}&turno=${this.turno}`
-                );
+        gerar() {
+            axios.post(
+                `http://localhost:3000/salas/criar-grade?dia=${this.day}&turno=${this.turno}`
+            );
+            this.refresh();
+        },
+        edit() {
+            this.$store.commit('setEditDialog', true);
+        },
+        refresh() {
+            this.showTable = false;
+            this.$nextTick(() => {
                 this.showTable = true;
-                
-            } catch (err) {
-                console.log(err);
-            }
+            });
         },
+        verificar() {
+            axios
+                .get(
+                    `http://localhost:3000/salas/grade/?dia=${this.day}&turno=${this.turno}`
+                )
+                .then((response) => {
+                    let vazio = false;
+                    this.turmasNull = [];
+                    let turmasExibidas = [];
+                    response.data.forEach((element) => {
+                        if (element.Sala == null) {
+                            const turmaDisciplina = `${element.Turma}-${element.Disciplina}`;
+                            if (!turmasExibidas.includes(turmaDisciplina)) {
+                                this.turmasNull.push({
+                                    turma: element.Turma,
+                                    materia: element.Disciplina,
+                                });
+                                turmasExibidas.push(turmaDisciplina);
+                            }
+                            this.gradeNull = true;
+                            vazio = true;
+                        }
+                    });
+                    if (!vazio) {
+                        this.gradeNull = false;
+                    }
+                });
+        },
+        showMissing() {
+            alert(
+                'Turmas sem sala: ' +
+                    this.turmasNull
+                        .map((item) => item.turma + ' (' + item.materia + ')')
+                        .join(', ')
+            );
+        },
+    },
+    computed: {
+        dynamicComponent() {
+            if (this.$store.state.editDialog) {
+                return EditDialog;
+            }
+            return null;
+        },
+    },
+    created() {
+        this.intervalID = setInterval(this.verificar, 3000); //
+    },
+    beforeDestroy() {
+        clearInterval(this.intervalID);
     },
 };
 </script>
@@ -112,5 +192,11 @@ export default {
 .active {
     background-color: #101fd0;
     color: white;
+}
+.btn-edit {
+    margin-right: 5rem;
+}
+.alert {
+    margin-right: 10rem;
 }
 </style>

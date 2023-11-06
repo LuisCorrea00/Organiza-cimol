@@ -12,7 +12,7 @@
                                     v-for="(horario, hIndex) in horarios[turno]"
                                     :key="hIndex"
                                 >
-                                    {{ horario }}
+                                    {{ horario.slice(0, 5) }}
                                 </th>
                                 <th>Tipo</th>
                                 <th>Capac</th>
@@ -35,7 +35,9 @@
                                                 grade.Horario === horario
                                             "
                                         >
-                                            {{ grade.Turma }} ({{ grade.Disciplina }})
+                                            {{ grade.Turma }} ({{
+                                                grade.Disciplina
+                                            }})
                                         </span>
                                     </span>
                                 </td>
@@ -107,6 +109,13 @@ export default {
     },
     props: {
         predioName: String,
+    },
+    methods: {
+        close() {
+            this.$store.commit('setEditDialog', false);
+            this.turma = null;
+            this.materia = null;
+        },
     },
     watch: {
         turno(newValue) {
