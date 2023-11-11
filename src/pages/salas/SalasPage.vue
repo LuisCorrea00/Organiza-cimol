@@ -1,12 +1,18 @@
 <template>
     <v-main>
+        <v-progress-linear
+            :indeterminate="true"
+            color="grey"
+            height="7"
+            fixed
+            v-if="loading"
+        />
         <v-container>
-            <v-row justify="center" class="mt-10">
+            <v-row class="d-flex justify-center mt-10">
                 <v-col class="text-center" cols="12">
                     <v-btn
                         class="ml-6"
                         outlined
-                        rounded
                         v-for="(selectedDay, index) in Week"
                         :key="index"
                         @click="changeDay(selectedDay)"
@@ -16,12 +22,11 @@
                     </v-btn>
                 </v-col>
             </v-row>
-            <v-row justify="center" class="mt-10">
+            <v-row class="d-flex justify-center mt-10">
                 <v-col class="text-center" cols="12">
                     <v-btn
                         class="ml-6"
                         outlined
-                        rounded
                         v-for="(selectedTurno, index) in Turnos"
                         :key="index"
                         @click="changeTurno(selectedTurno)"
@@ -62,7 +67,7 @@
         <v-btn
             fab
             fixed
-            right
+            left
             bottom
             color="error"
             x-large
@@ -72,17 +77,19 @@
         >
             <v-icon>mdi-alert</v-icon>
         </v-btn>
+        <PdfButton/>
     </v-main>
 </template>
 
 <script>
 import TabelaSalas from '@/components/tabela/TabelaSalas.vue';
 import EditDialog from '@/components/edit/EditDialog.vue';
+import PdfButton from '@/components/pdf/PdfButton.vue'
 import axios from 'axios';
 
 export default {
     name: 'SalasPage',
-    components: { TabelaSalas, EditDialog },
+    components: { TabelaSalas, EditDialog, PdfButton },
     data() {
         return {
             turmasNull: [],
@@ -106,6 +113,7 @@ export default {
                 { name: 'Quinta' },
                 { name: 'Sexta' },
             ],
+            loading: false,
         };
     },
     methods: {
@@ -120,12 +128,16 @@ export default {
             this.refresh();
         },
         async gerar() {
-            try{
+            this.loading = true;
+            try {
                 await axios.post(
-                `http://localhost:3000/salas/criar-grade?dia=${this.day}&turno=${this.turno}`
+                    `https://api-cimol.onrender.com/salas/criar-grade?dia=${this.day}&turno=${this.turno}`
                 );
-                this.refresh();
-            } catch(err) {
+                setTimeout(() => {
+                    this.refresh();
+                    this.loading = false;
+                }, 1000);
+            } catch (err) {
                 console.log(err);
             }
         },
@@ -141,7 +153,7 @@ export default {
         verificar() {
             axios
                 .get(
-                    `http://localhost:3000/salas/grade/?dia=${this.day}&turno=${this.turno}`
+                    `https://api-cimol.onrender.com/salas/grade/?dia=${this.day}&turno=${this.turno}`
                 )
                 .then((response) => {
                     let vazio = false;
@@ -167,11 +179,14 @@ export default {
                 });
         },
         showMissing() {
-            alert(
-                'Turmas sem sala: ' +
+            this.$store.commit(
+                'showErrorMessage',
+                `${
+                    'Turma(s) sem sala: ' +
                     this.turmasNull
                         .map((item) => item.turma + ' (' + item.materia + ')')
                         .join(', ')
+                }`
             );
         },
     },
@@ -201,6 +216,6 @@ export default {
     margin-right: 5rem;
 }
 .alert {
-    margin-right: 10rem;
+    margin-left: 5rem;
 }
 </style>

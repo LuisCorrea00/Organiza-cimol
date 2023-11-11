@@ -1,9 +1,9 @@
 <template>
     <div>
-        <v-snackbar v-model="showMessage" :color="color" multi-line>
+        <v-snackbar v-model="this.$store.state.showMessage" :color="color" :multi-line="multiLine">
             {{ message }}
             <template v-slot:action="{ attrs }">
-                <v-btn text v-bind="attrs" @click="showMessage = false">
+                <v-btn text v-bind="attrs" @click="closeSnackbar">
                     Fechar
                 </v-btn>
             </template>
@@ -18,7 +18,6 @@ export default {
         return {
             message: '',
             color: '',
-            showMessage: false,
         };
     },
     watch: {
@@ -31,10 +30,10 @@ export default {
                 this.$store.state.message.type === 'ERROR'
                     ? 'error'
                     : 'success';
-            this.showMessage = true;
+        },
+        closeSnackbar() {
+            this.$store.commit('setShowMessage', false);
         },
     },
 };
 </script>
-
-<style scoped></style>

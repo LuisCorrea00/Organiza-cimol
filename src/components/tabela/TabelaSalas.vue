@@ -1,25 +1,42 @@
 <template>
     <v-container>
         <v-row>
-            {{ predioName }}
+            <span class="text-h5 font-weight-bold">{{ predioName }}</span>
             <v-col cols="12">
                 <v-simple-table>
                     <template v-slot:default>
                         <thead>
                             <tr>
-                                <th>Sala</th>
+                                <th
+                                    class="text-body-1 black--text font-weight-medium"
+                                >
+                                    Sala
+                                </th>
                                 <th
                                     v-for="(horario, hIndex) in horarios[turno]"
                                     :key="hIndex"
+                                    class="text-body-1 black--text font-weight-medium"
                                 >
                                     {{ horario.slice(0, 5) }}
                                 </th>
-                                <th>Tipo</th>
-                                <th>Capac</th>
+                                <th
+                                    class="text-body-1 black--text font-weight-medium"
+                                >
+                                    Tipo
+                                </th>
+                                <th
+                                    class="text-body-1 black--text font-weight-medium"
+                                >
+                                    Capacidade
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(sala, sIndex) in salas" :key="sIndex">
+                            <tr
+                                v-for="(sala, sIndex) in salas"
+                                :key="sIndex"
+                                class="black--text"
+                            >
                                 <td>{{ sala.nome }}</td>
                                 <td
                                     v-for="(horario, hIndex) in horarios[turno]"
@@ -82,7 +99,7 @@ export default {
         };
     },
     created() {
-        axios.get('http://localhost:3000/salas/').then((response) => {
+        axios.get('https://api-cimol.onrender.com/salas/').then((response) => {
             response.data.forEach((element) => {
                 if (
                     element.predio ==
@@ -94,7 +111,7 @@ export default {
         });
         axios
             .get(
-                `http://localhost:3000/salas/grade/?dia=${this.day}&turno=${this.turno}`
+                `https://api-cimol.onrender.com/salas/grade/?dia=${this.day}&turno=${this.turno}`
             )
             .then((response) => {
                 response.data.forEach((element) => {

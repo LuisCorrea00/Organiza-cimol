@@ -1,11 +1,12 @@
 <template>
     <v-dialog v-model="this.$store.state.editDialog" width="60vw" persistent>
         <v-card>
-            <v-card-title primary-title>
-                {{ this.day }} de {{ this.turno }}
+            <v-card-title class="mb-2">
+                <v-progress-linear v-model="steps" class="mb-3" />
+                <span>{{ this.day }} de {{ this.turno }}</span>
                 <v-spacer></v-spacer>
                 <v-btn icon @click="close">
-                    <v-icon>mdi-close</v-icon>
+                    <v-icon color="black">mdi-close</v-icon>
                 </v-btn>
             </v-card-title>
             <v-card-text>
@@ -42,15 +43,20 @@
             </v-card-text>
             <v-card-actions>
                 <div v-if="turma && materia && showOptions">
-                    <v-btn text @click="limpar">Desocupar</v-btn>
+                    <v-btn text @click="limpar" :loading="loading" class="mr-2">
+                        Desocupar
+                    </v-btn>
                     <v-btn
                         text
                         @click="(showSalas = true), (showOptions = false)"
-                        >Alterar</v-btn
                     >
+                        Alterar
+                    </v-btn>
                 </div>
                 <div v-if="turma && materia && sala">
-                    <v-btn text @click="update">Salvar</v-btn>
+                    <v-btn text @click="update" :loading="loading">
+                        Salvar
+                    </v-btn>
                 </div>
             </v-card-actions>
         </v-card>
@@ -75,6 +81,8 @@ export default {
             sala: null,
             showSalas: false,
             showOptions: true,
+            steps: 0,
+            loading: false,
         };
     },
     methods: {
@@ -83,8 +91,9 @@ export default {
             this.$emit('atualizar');
         },
         update() {
+            this.loading = true;
             axios
-                .post('http://localhost:3000/salas/update', {
+                .post('https://api-cimol.onrender.com/salas/update', {
                     disc: this.materia,
                     turma: this.turma,
                     dia: this.day,
@@ -92,30 +101,40 @@ export default {
                     sala: this.sala,
                 })
                 .then((response) => {
-                    console.log(response);
-                    if (response.data != 'OK') {
-                        this.$store.commit('showErrorMessage', response.data);
-                    } else {
-                        this.$store.commit(
-                            'showSuccessMessage',
-                            'Sala alterada com sucesso!'
-                        );
-                        this.close();
-                    }
+                    setTimeout(() => {
+                        if (response.data != 'OK') {
+                            this.loading = false;
+                            this.$store.commit(
+                                'showErrorMessage',
+                                response.data
+                            );
+                        } else {
+                            this.loading = false;
+                            this.$store.commit(
+                                'showSuccessMessage',
+                                'Sala alterada com sucesso!'
+                            );
+                            this.close();
+                        }
+                    }, 1000);
                 });
         },
         limpar() {
-            axios.post('http://localhost:3000/salas/limpar', {
+            this.loading = true;
+            axios.post('https://api-cimol.onrender.com/salas/limpar', {
                 disc: this.materia,
                 turma: this.turma,
                 dia: this.day,
                 turno: this.turno,
             });
-            this.$store.commit(
-                'showSuccessMessage',
-                'Sala liberada com sucesso!'
-            );
-            this.close();
+            setTimeout(() => {
+                this.loading = false;
+                this.$store.commit(
+                    'showSuccessMessage',
+                    'Sala desocupada com sucesso!'
+                );
+                this.close();
+            }, 1000);
         },
     },
     watch: {
@@ -125,9 +144,30 @@ export default {
         day(newValue) {
             this.$store.commit('setDay', newValue);
         },
+        turma(newValue) {
+            if (newValue) {
+                this.steps = 33;
+            } else {
+                this.steps = 0;
+            }
+        },
+        materia(newValue) {
+            if (newValue) {
+                this.steps = 66;
+            } else {
+                this.steps = this.turma ? 33 : 0;
+            }
+        },
+        sala(newValue) {
+            if (newValue) {
+                this.steps = 100;
+            } else {
+                this.steps = this.materia ? 66 : this.turma ? 33 : 0;
+            }
+        },
     },
     created() {
-        axios.get('http://localhost:3000/salas/').then((response) => {
+        axios.get('https://api-cimol.onrender.com/salas/').then((response) => {
             response.data.forEach((element) => {
                 const salas = {
                     predio: element.predio,
@@ -139,7 +179,7 @@ export default {
         });
         axios
             .get(
-                `http://localhost:3000/salas/grade/?dia=${this.day}&turno=${this.turno}`
+                `https://api-cimol.onrender.com/salas/grade/?dia=${this.day}&turno=${this.turno}`
             )
             .then((response) => {
                 response.data.forEach((element) => {
@@ -153,7 +193,7 @@ export default {
             });
         axios
             .get(
-                `http://localhost:3000/horario/?dia=${this.day}&turno=${this.turno}`
+                `https://api-cimol.onrender.com/horario/?dia=${this.day}&turno=${this.turno}`
             )
             .then((response) => {
                 response.data.forEach((element) => {

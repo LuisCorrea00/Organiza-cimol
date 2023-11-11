@@ -7,6 +7,7 @@ export default new Vuex.Store({
     state: {
         username: null,
         token: null,
+        showMessage: false,
         message: {
             text: '',
             type: '',
@@ -28,13 +29,18 @@ export default new Vuex.Store({
         setDay(state, payload){
             state.day = payload;
         },
+        setShowMessage(state, payload) {
+            state.showMessage = payload;
+        },
         showErrorMessage(state, payload) {
+            state.showMessage = true;
             state.message = {
                 text: payload,
                 type: 'ERROR',
             };
         },
         showSuccessMessage(state, payload) {
+            state.showMessage = true;
             state.message = {
                 text: payload,
                 type: 'SUCCESS',
