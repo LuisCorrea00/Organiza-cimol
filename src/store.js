@@ -15,6 +15,7 @@ export default new Vuex.Store({
         turno: 'Manhã',
         day:'Segunda',
         editDialog: false,
+        pdfDialog: false,
     },
     mutations: {
         setUser(state, payload){
@@ -49,5 +50,8 @@ export default new Vuex.Store({
         setEditDialog(state, payload){
             state.editDialog = payload;
         },
+        setPdfDialog(state, payload){
+            state.pdfDialog = payload;
+        }
     }
 });

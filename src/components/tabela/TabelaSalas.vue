@@ -19,6 +19,7 @@
                                 >
                                     {{ horario.slice(0, 5) }}
                                 </th>
+
                                 <th
                                     class="text-body-1 black--text font-weight-medium"
                                 >
@@ -43,8 +44,8 @@
                                     :key="hIndex"
                                 >
                                     <span
-                                        v-for="grade in gradePredio"
-                                        :key="grade"
+                                        v-for="(grade, gIndex) in gradePredio"
+                                        :key="gIndex"
                                     >
                                         <span
                                             v-if="

@@ -48,6 +48,9 @@
             <div v-if="$store.state.editDialog">
                 <component :is="dynamicComponent" @atualizar="refresh" />
             </div>
+            <div v-if="$store.state.pdfDialog">
+                <PdfDialog />
+            </div>
         </v-container>
         <v-btn fab fixed right bottom color="primary" x-large @click="gerar">
             <v-icon>mdi-calendar-edit</v-icon>
@@ -77,19 +80,21 @@
         >
             <v-icon>mdi-alert</v-icon>
         </v-btn>
-        <PdfButton/>
+        <v-btn @click="pdf" fab fixed left bottom x-large color="primary">
+            <v-icon>mdi-file-pdf-box</v-icon>
+        </v-btn>
     </v-main>
 </template>
 
 <script>
 import TabelaSalas from '@/components/tabela/TabelaSalas.vue';
 import EditDialog from '@/components/edit/EditDialog.vue';
-import PdfButton from '@/components/pdf/PdfButton.vue'
+import PdfDialog from '@/components/pdf/PdfDialog.vue';
 import axios from 'axios';
 
 export default {
     name: 'SalasPage',
-    components: { TabelaSalas, EditDialog, PdfButton },
+    components: { TabelaSalas, EditDialog, PdfDialog },
     data() {
         return {
             turmasNull: [],
@@ -133,16 +138,17 @@ export default {
                 await axios.post(
                     `https://api-cimol.onrender.com/salas/criar-grade?dia=${this.day}&turno=${this.turno}`
                 );
-                setTimeout(() => {
-                    this.refresh();
-                    this.loading = false;
-                }, 1000);
+                this.refresh();
+                this.loading = false;
             } catch (err) {
                 console.log(err);
             }
         },
         edit() {
             this.$store.commit('setEditDialog', true);
+        },
+        pdf() {
+            this.$store.commit('setPdfDialog', true);
         },
         refresh() {
             this.showTable = false;

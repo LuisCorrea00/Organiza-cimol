@@ -62,35 +62,32 @@ export default {
                             senha: this.password,
                         })
                         .then((response) => {
-                            console.log(response);
-                            setTimeout(() => {
-                                if (response.data.user) {
-                                    if (response.data.user.admin === 1) {
-                                        this.$store.commit(
-                                            'setUser',
-                                            response.data.user
-                                        );
-                                        this.$store.commit(
-                                            'setToken',
-                                            response.data.token
-                                        );
-                                        this.loading = false;
-                                        this.$router.push('/painel');
-                                    } else {
-                                        this.loading = false;
-                                        this.$store.commit(
-                                            'showErrorMessage',
-                                            'Você não tem permissão para acessar o painel de controle'
-                                        );
-                                    }
+                            if (response.data.user) {
+                                if (response.data.user.admin === 1) {
+                                    this.$store.commit(
+                                        'setUser',
+                                        response.data.user
+                                    );
+                                    this.$store.commit(
+                                        'setToken',
+                                        response.data.token
+                                    );
+                                    this.loading = false;
+                                    this.$router.push('/painel');
                                 } else {
                                     this.loading = false;
                                     this.$store.commit(
                                         'showErrorMessage',
-                                        'Os dados inseridos não conferem com nenhum usuário cadastrado'
+                                        'Você não tem permissão para acessar o painel de controle'
                                     );
                                 }
-                            }, 1000);
+                            } else {
+                                this.loading = false;
+                                this.$store.commit(
+                                    'showErrorMessage',
+                                    'Os dados inseridos não conferem com nenhum usuário cadastrado'
+                                );
+                            }
                         });
                 } catch (err) {
                     this.loading = false;
@@ -112,9 +109,9 @@ export default {
 </script>
 
 <style scoped>
-.btn{
+.btn {
     transition: all 0.3s;
-    &:hover{
+    &:hover {
         transform: scale(1.04);
     }
 }

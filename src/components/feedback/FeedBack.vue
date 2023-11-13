@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-snackbar v-model="this.$store.state.showMessage" :color="color" :multi-line="multiLine">
+        <v-snackbar v-model="this.$store.state.showMessage" :color="color" timeout="-1">
             {{ message }}
             <template v-slot:action="{ attrs }">
                 <v-btn text v-bind="attrs" @click="closeSnackbar">

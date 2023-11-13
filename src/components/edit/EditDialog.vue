@@ -88,7 +88,6 @@ export default {
     methods: {
         close() {
             this.$store.commit('setEditDialog', false);
-            this.$emit('atualizar');
         },
         update() {
             this.loading = true;
@@ -101,22 +100,17 @@ export default {
                     sala: this.sala,
                 })
                 .then((response) => {
-                    setTimeout(() => {
-                        if (response.data != 'OK') {
-                            this.loading = false;
-                            this.$store.commit(
-                                'showErrorMessage',
-                                response.data
-                            );
-                        } else {
-                            this.loading = false;
-                            this.$store.commit(
-                                'showSuccessMessage',
-                                'Sala alterada com sucesso!'
-                            );
-                            this.close();
-                        }
-                    }, 1000);
+                    if (response.data != 'OK') {
+                        this.loading = false;
+                        this.$store.commit('showErrorMessage', response.data);
+                    } else {
+                        this.loading = false;
+                        this.$store.commit(
+                            'showSuccessMessage',
+                            'Sala alterada com sucesso!'
+                        );
+                        this.close();
+                    }
                 });
         },
         limpar() {
@@ -127,14 +121,12 @@ export default {
                 dia: this.day,
                 turno: this.turno,
             });
-            setTimeout(() => {
-                this.loading = false;
-                this.$store.commit(
-                    'showSuccessMessage',
-                    'Sala desocupada com sucesso!'
-                );
-                this.close();
-            }, 1000);
+            this.loading = false;
+            this.$store.commit(
+                'showSuccessMessage',
+                'Sala desocupada com sucesso!'
+            );
+            this.close();
         },
     },
     watch: {
