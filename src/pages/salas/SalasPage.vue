@@ -46,10 +46,10 @@
                 </v-row>
             </template>
             <div v-if="$store.state.editDialog">
-                <component :is="dynamicComponent" @atualizar="refresh" />
+                <component @atualizar="refresh()" :is="dynamicComponent" />
             </div>
             <div v-if="$store.state.pdfDialog">
-                <PdfDialog />
+                <PdfDialog/>
             </div>
         </v-container>
         <v-btn fab fixed right bottom color="primary" x-large @click="gerar">

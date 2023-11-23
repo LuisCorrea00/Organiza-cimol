@@ -81,7 +81,7 @@ export default {
                         ],
                         body: this.infos,
                     });
-                    pdf.save(`Salas${this.turma}.pdf`);
+                    pdf.save(`Salas ${this.turma}.pdf`);
                 });
         },
         close() {
